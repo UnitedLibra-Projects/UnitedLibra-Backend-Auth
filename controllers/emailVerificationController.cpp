@@ -5,6 +5,9 @@
 #include <drogon/HttpRequest.h>
 #include <drogon/HttpResponse.h>
 #include <drogon/HttpTypes.h>
+#include <exception>
+#include <memory>
+#include <numbers>
 #include <random>
 #include <chrono>
 #include <drogon/HttpController.h>
@@ -53,7 +56,7 @@ void sendEmailCode(std::string email, std::string code)
     });
 }
 
-drogon::Task<drogon::HttpResponsePtr> AuthController::sendCode(drogon::HttpRequestPtr req)
+drogon::Task<drogon::HttpResponsePtr> EmailVerificationController::sendCode(drogon::HttpRequestPtr req)
 {
    auto email_json = req->getJsonObject();
 
@@ -82,7 +85,33 @@ drogon::Task<drogon::HttpResponsePtr> AuthController::sendCode(drogon::HttpReque
    co_return resp;
 }
 
-drogon::Task<drogon::HttpResponsePtr> AuthController::verifyCode(drogon::HttpRequestPtr req)
+drogon::Task<drogon::HttpResponsePtr> EmailVerificationController::verifyCode(drogon::HttpRequestPtr req)
 {
-   co_return drogon::HttpResponse::newHttpResponse();
+   auto req_json = req->getJsonObject();
+
+   std::string code = (*req_json)["code"].asString();
+   std::string email = (*req_json)["email"].asString();
+
+   drogon::HttpResponsePtr resp;
+   Json::Value resp_json;
+
+   if(codes[email].expiresAt >= std::chrono::steady_clock::now()) 
+   {
+      resp_json["error"] = "time is up";
+      resp = drogon::HttpResponse::newHttpJsonResponse(resp_json);
+
+      co_return resp;
+   }
+   if(code != codes[email].code)
+   {
+      resp_json["error"] = "invalid code";
+      resp = drogon::HttpResponse::newHttpJsonResponse(resp_json);
+
+      co_return resp;
+   }
+
+   resp_json["status"] = "ok";
+   resp = drogon::HttpResponse::newHttpJsonResponse(resp_json);
+
+   co_return resp;
 }

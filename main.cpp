@@ -6,6 +6,6 @@ int main()
 {
    dotenv::init(dotenv::Preserve);
 
-   drogon::app().loadConfigFile("config.json");
+   drogon::app().loadConfigFile("./config.json");
    drogon::app().run();
 }
