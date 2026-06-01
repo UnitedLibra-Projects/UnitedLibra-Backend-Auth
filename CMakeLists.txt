@@ -17,6 +17,7 @@ FetchContent_MakeAvailable(dotenv-cpp)
 
 find_package(Drogon CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(jsoncpp CONFIG REQUIRED)
 
 add_executable(AuthService main.cpp controllers/emailVerificationController.cpp controllers/authController.cpp controllers/userActionController.cpp)
-target_link_libraries(AuthService PRIVATE Drogon::Drogon dotenv OpenSSL::Crypto)
+target_link_libraries(AuthService PRIVATE Drogon::Drogon JsonCpp:JsonCpp dotenv OpenSSL::Crypto)

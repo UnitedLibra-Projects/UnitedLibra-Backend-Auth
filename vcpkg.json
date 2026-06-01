@@ -1,0 +1,9 @@
+{
+  "name": "catalog-service",
+  "version-string": "0.1.0",
+  "builtin-baseline": "12dcccadfe573d0eaa6c67a968413ded7805d256",
+  "dependencies": [
+    "drogon",
+    "jsoncpp"
+  ]
+}
