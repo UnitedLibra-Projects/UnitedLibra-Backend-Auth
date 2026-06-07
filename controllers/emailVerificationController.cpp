@@ -95,7 +95,7 @@ drogon::Task<drogon::HttpResponsePtr> EmailVerificationController::verifyCode(dr
    drogon::HttpResponsePtr resp;
    Json::Value resp_json;
 
-   if(codes[email].expiresAt >= std::chrono::steady_clock::now()) 
+   if(codes[email].expiresAt <= std::chrono::steady_clock::now()) 
    {
       resp_json["error"] = "time is up";
       resp = drogon::HttpResponse::newHttpJsonResponse(resp_json);
